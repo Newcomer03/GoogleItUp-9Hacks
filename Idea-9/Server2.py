@@ -86,6 +86,7 @@ class echoHandler(BaseHTTPRequestHandler):
             self.send_header('content-type', 'text/html')
             self.send_header('Location', '/tasklist')
             self.end_headers()
+            
 
 def main():
     PORT = 8888
