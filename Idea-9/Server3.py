@@ -6,12 +6,11 @@ Usage::
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import logging, cgi
 
-tasklist =["Task-1"]
+tasklist =[]
 
 class S(BaseHTTPRequestHandler):
     def do_GET(self):
 
-        logging.info("GET request,\nPath: %s\nHeaders:\n%s\n", str(self.path), str(self.headers))
         if self.path.endswith('/tasklist'):
             self.send_response(200)
             self.send_header('content-type', 'text/html')
@@ -19,8 +18,8 @@ class S(BaseHTTPRequestHandler):
 
             output = ''
             output += '<html><body>'
-            output += '<h1>Task List</h1>'
-            output += '<h3><a href="/tasklist/new">Add New Task</a></h3>'
+            output += '<h1>NOTIFICATIONS</h1>'
+            output += '<h3><a href="/tasklist/new">New Alert</a></h3>'
             for task in tasklist:
                 output += task
                 output += '<a href="/tasklist/%s/remove">X</a>' % task
@@ -36,10 +35,10 @@ class S(BaseHTTPRequestHandler):
 
             output = ''
             output += '<html><body>'
-            output += '<h1>Add New Task</h1>'
+            output += '<h1>New Alert</h1>'
 
             output += '<form method="POST" enctype="multipart/form-data" action="/tasklist/new">'
-            output += '<input name="task" type="text" placeholder="Add new task">'
+            output += '<input name="task" type="text" placeholder="New Alert">'
             output += '<input type="submit" value="Add">'
             output += '</form>'
 
@@ -55,13 +54,12 @@ class S(BaseHTTPRequestHandler):
 
             output = ''
             output += '<html><body>'
-            output += '<h1>Remove Task: %s</h1>' % listIDPath
+            output += '<h1>Remove Notification: %s</h1>' % listIDPath
             output += '<form method="POST" enctype="multipart/form-data" action="/tasklist/%s/remove">' % listIDPath
             output += '<input type="submit" value="Remove"></form>'
             output += '<a href="/tasklist">Cancel</a>'
 
             self.wfile.write(output.encode())
-        self.wfile.write("GET request for {}".format(self.path).encode('utf-8'))
 
     def do_POST(self):
         if self.path.endswith('/new'):
@@ -79,7 +77,7 @@ class S(BaseHTTPRequestHandler):
             self.send_header('Location', '/tasklist')
             self.end_headers()
 
-            self.wfile.write("POST request for {}".format(self.path).encode('utf-8'))
+            
 
         if self.path.endswith('/remove'):
             listIDPath = self.path.split('/')[2]
@@ -93,11 +91,7 @@ class S(BaseHTTPRequestHandler):
             self.send_header('Location', '/tasklist')
             self.end_headers()
 
-            self.wfile.write("POST request for {}".format(self.path).encode('utf-8'))
-        
-        
-        
-        
+
 
 def run(server_class=HTTPServer, handler_class=S, port=8080):
     logging.basicConfig(level=logging.INFO)
@@ -118,3 +112,6 @@ if __name__ == '__main__':
         run(port=int(argv[1]))
     else:
         run()
+
+
+
