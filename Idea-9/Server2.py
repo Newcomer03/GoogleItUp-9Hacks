@@ -1,6 +1,7 @@
 # python -m http.server 8000 --directory ./my_dir
 
 from http.server import HTTPServer , BaseHTTPRequestHandler
+import cgi
 
 tasklist = ["Task-1", "Task-2", "Task-3"]
 
@@ -17,6 +18,7 @@ class echoHandler(BaseHTTPRequestHandler):
             output += '<h3><a href="/tasklist/new">Add New Task</a></h3>'
             for task in tasklist:
                 output += task
+                output += '<a href="/tasklist/%s/remove">X</a>' % task
                 output += '</br>'
 
             output += '</body></html>'
@@ -39,13 +41,54 @@ class echoHandler(BaseHTTPRequestHandler):
             output += '</body></html>'
             self.wfile.write(output.encode())
 
-    def do_POST():
-        if self.path.endswith('/new'):
-            
+        if self.path.endswith('/remove'):
+            listIDPath = self.path.split('/')[2]
 
+            self.send_response(200)
+            self.send_header('content-type', 'text/html')
+            self.end_headers()
+
+            output = ''
+            output += '<html><body>'
+            output += '<h1>Remove Task: %s</h1>' % listIDPath
+            output += '<form method="POST" enctype="multipart/form-data" action="/tasklist/%s/remove">' % listIDPath
+            output += '<input type="submit" value="Remove"></form>'
+            output += '<a href="/tasklist">Cancel</a>'
+
+            self.wfile.write(output.encode())
+
+
+
+    def do_POST(self):
+        if self.path.endswith('/new'):
+            ctype, pdict = cgi.parse_header(self.headers.get('content-type'))
+            pdict['boundary'] = bytes(pdict['boundary'], "utf-8")
+            content_len = int(self.headers.get('Content-length'))
+            pdict['CONTENT-LENGTH'] = content_len
+            if ctype == "multipart/form-data":
+                fields = cgi.parse_multipart(self.rfile, pdict)
+                new_task = fields.get('task')
+                tasklist.append(new_task[0])
+
+            self.send_response(301)
+            self.send_header('content-type', 'text/html')
+            self.send_header('Location', '/tasklist')
+            self.end_headers()
+
+        if self.path.endswith('/remove'):
+            listIDPath = self.path.split('/')[2]
+            ctype, pdict = cgi.parse_header(self.headers.get('content-type'))
+            if ctype == "multipart/form-data":
+                list_item = listIDPath
+                tasklist.remove(list_item)
+
+            self.send_response(301)
+            self.send_header('content-type', 'text/html')
+            self.send_header('Location', '/tasklist')
+            self.end_headers()
 
 def main():
-    PORT = 9000
+    PORT = 8888
     server_address = ('localhost', PORT)
     server = HTTPServer(server_address, echoHandler)
     print("Server is running on the port %s" %PORT)
