@@ -14,3 +14,6 @@ Ideas:
 6. Online tracking mechanism for identification of website/apps infringing copyrights of the content producers such as broadcasters, OTT platforms, etc.
 7. IOT + Webdev??
 8. Online game??
+9. Activity detecting robot for an empty house.
+    1. Use-case:
+    2. When nobody is in house, if a thief enters, or if there is a fire, or gas leak etc, it can detect and notify… and more features.
