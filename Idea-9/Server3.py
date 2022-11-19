@@ -4,28 +4,65 @@ Usage::
     ./server.py [<port>]
 """
 from http.server import BaseHTTPRequestHandler, HTTPServer
-import logging, cgi
+import logging, cgi, requests
 
 tasklist =[]
 
 class S(BaseHTTPRequestHandler):
     def do_GET(self):
-
         if self.path.endswith('/tasklist'):
             self.send_response(200)
             self.send_header('content-type', 'text/html')
             self.end_headers()
 
             output = ''
-            output += '<html><body>'
-            output += '<h1>NOTIFICATIONS</h1>'
-            output += '<h3><a href="/tasklist/new">New Alert</a></h3>'
-            for task in tasklist:
-                output += task
-                output += '<a href="/tasklist/%s/remove">X</a>' % task
-                output += '</br>'
+            output += """<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-            output += '</body></html>'
+        h1{
+            background-color: lightblue;
+            margin: 20px 20px 0px 20px;
+            padding:5px 20px;
+            border-radius: 7.5px;
+        }
+
+        h3{
+            background-color: bisque;
+            margin: 20px 40px;
+            padding: 20px 40px;
+            border-radius: 7.5px;
+        }
+
+        a{
+            text-decoration: none;
+        }
+
+    </style>
+</head>
+<body>
+    <div>
+        <h1>ALERTS</h1>
+    </div>
+    <div>
+        <h3>
+            <a href="/tasklist/new">New Alert</a>
+        """
+            for task in tasklist:
+                output += '</br>'
+                output += task
+                output += '<a href="/tasklist/%s/remove">  X</a>' % task
+
+            output += '</h3></div></body></html>'
             self.wfile.write(output.encode())
 
         if self.path.endswith('/new'):
@@ -34,7 +71,47 @@ class S(BaseHTTPRequestHandler):
             self.end_headers()
 
             output = ''
-            output += '<html><body>'
+            output += """<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        h1{
+            background-color: lightblue;
+            margin: 20px 20px 0px 20px;
+            padding:5px 20px;
+            border-radius: 7.5px;
+        }
+
+        h3{
+            background-color: bisque;
+            margin: 20px 40px;
+            padding: 20px 40px;
+            border-radius: 7.5px;
+        }
+
+        a{
+            text-decoration: none;
+        }
+
+        input, button{
+            font-size: x-large;
+            margin: 20px 40px;
+            padding: 5px 15px;
+        }
+
+    </style>
+</head>
+<body>
+"""
             output += '<h1>New Alert</h1>'
 
             output += '<form method="POST" enctype="multipart/form-data" action="/tasklist/new">'
@@ -53,7 +130,46 @@ class S(BaseHTTPRequestHandler):
             self.end_headers()
 
             output = ''
-            output += '<html><body>'
+            output += """<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        h1{
+            background-color: lightblue;
+            margin: 20px 20px 0px 20px;
+            padding:5px 20px;
+            border-radius: 7.5px;
+        }
+
+        h3{
+            background-color: bisque;
+            margin: 20px 40px;
+            padding: 20px 40px;
+            border-radius: 7.5px;
+        }
+
+        a{
+            text-decoration: none;
+        }
+
+        input, button{
+            font-size: x-large;
+            margin: 20px 40px;
+            padding: 5px 15px;
+        }
+
+    </style>
+</head>
+<body>"""
             output += '<h1>Remove Notification: %s</h1>' % listIDPath
             output += '<form method="POST" enctype="multipart/form-data" action="/tasklist/%s/remove">' % listIDPath
             output += '<input type="submit" value="Remove"></form>'
@@ -112,6 +228,4 @@ if __name__ == '__main__':
         run(port=int(argv[1]))
     else:
         run()
-
-
-
+        
